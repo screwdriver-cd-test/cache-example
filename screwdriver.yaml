@@ -1,0 +1,34 @@
+cache:
+    event:
+        - $SD_SOURCE_DIR/node_modules
+    pipeline:
+        - ~/.gradle
+    job:
+        test-job: [/tmp/testblah]
+jobs:
+    test-job:
+        image: node:6
+        steps:
+            - ls-tmp: ls /tmp
+            - echo: echo hi > /tmp/testblah
+        requires: [~commit, ~pr]
+    npm1:
+        image: node:6
+        steps:
+            - install: npm install
+        requires: [~commit, ~pr]
+    npm2:
+        image: node:6
+        steps:
+            - ls: ls
+            - install: npm install
+        requires: [npm1]
+    gradle:
+        image: java:7
+        steps:
+            - ls: ls ~/
+            - install: git clone https://github.com/gradle-guides/gradle-site-plugin.git && cd gradle-site-plugin && ./gradlew build
+            - upload: cp -r ~/.gradle $SD_ARTIFACTS_DIR/
+        environment:
+            SD_ZIP_ARTIFACTS: true
+        requires: [~commit, ~pr]
