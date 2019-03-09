@@ -24,7 +24,7 @@ jobs:
             - install: npm install
         requires: [npm1]
     gradle:
-        image: java:7
+        image: java:8
         steps:
             - ls: ls ~/
             - install: git clone https://github.com/gradle-guides/gradle-site-plugin.git && cd gradle-site-plugin && ./gradlew build
