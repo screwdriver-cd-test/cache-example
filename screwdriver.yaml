@@ -27,7 +27,7 @@ jobs:
         image: java:8
         steps:
             - ls: ls ~/
-            - install: git clone https://github.com/gradle-guides/gradle-site-plugin.git && cd gradle-site-plugin && ./gradlew build
+            - install: git clone https://github.com/gradle/gradle-site-plugin.git && cd gradle-site-plugin && ./gradlew build
             - upload: cp -r ~/.gradle $SD_ARTIFACTS_DIR/
         environment:
             SD_ZIP_ARTIFACTS: true
