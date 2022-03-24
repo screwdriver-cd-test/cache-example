@@ -1,34 +1,31 @@
 cache:
-    event:
-        - $SD_SOURCE_DIR/node_modules
-    pipeline:
-        - ~/.gradle
-    job:
-        test-job: [/tmp/testblah]
+   pipeline: [~/versions]
+   event: [$SD_SOURCE_DIR/node_modules]
+   job:
+       usejobcache: [/tmp/test]
+
 jobs:
-    test-job:
-        image: node:6
-        steps:
-            - ls-tmp: ls /tmp
-            - echo: echo hi > /tmp/testblah
-        requires: [~commit, ~pr]
-    npm1:
-        image: node:6
+    setnpmcache:
+        image: node:14
         steps:
             - install: npm install
         requires: [~commit, ~pr]
-    npm2:
-        image: node:6
+    usenpmcache:
+        image: node:14
         steps:
             - ls: ls
             - install: npm install
-        requires: [npm1]
-    gradle:
-        image: java:8
+        requires: [setnpmcache]
+    usepipelinecache:
+        image: java:7
         steps:
-            - ls: ls ~/
-            - install: git clone https://github.com/gradle/gradle-site-plugin.git && cd gradle-site-plugin && ./gradlew build
-            - upload: cp -r ~/.gradle $SD_ARTIFACTS_DIR/
-        environment:
-            SD_ZIP_ARTIFACTS: true
+            - cat: cat ~/versions || echo "versions file doesn't exist"
+            - install: echo "v1.0.0" > ~/versions
+        requires: [~commit, ~pr]
+    usejobcache:
+        image: node:14
+        steps:
+            - ls-tmp: ls /tmp
+            - echo: echo hi > /tmp/test
+            - cat: cat ~/versions || echo "versions file doesn't exist"
         requires: [~commit, ~pr]
